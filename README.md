@@ -16,11 +16,33 @@ pip install -r requirements.txt
 生成注意力热力图:
 
 ```bash
-python scripts/generate_attention_heatmaps.py \
+PYTHONPATH=. python scripts/generate_attention_heatmaps.py \
     --ckpt ckpt/ \
     --image data/2008_000008.jpg \
     --output outputs/
 ```
+
+如果需要指定运行的 GPU，可使用 `--cuda-device` 参数，例如将任务固定在第 6 张显卡上:
+
+```bash
+PYTHONPATH=. python scripts/generate_attention_heatmaps.py \
+    --ckpt ckpt/ \
+    --image data/2008_000008.jpg \
+    --output outputs/ \
+    --cuda-device 6
+```
+
+默认情况下，脚本会从首个检查点中解析 Swin 架构参数（如 `EMBED_DIM`、`DEPTHS`、`WINDOW_SIZE` 等），从而保证与训练时的配置一致。如果希望显式指定 `timm` 中的骨干网络名称，可传入 `--backbone`，例如：
+
+```bash
+PYTHONPATH=. python scripts/generate_attention_heatmaps.py \
+    --ckpt ckpt/mtlora.pth \
+    --image data/2008_000008.jpg \
+    --output outputs/ \
+    --backbone swin_tiny_patch4_window7_224
+```
+
+当启用自动推断架构时（默认行为），无需再使用 `--pretrained-backbone`，否则会触发冲突错误。
 
 脚本默认会运行以下四个任务:
 
